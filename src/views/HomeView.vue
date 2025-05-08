@@ -1,9 +1,12 @@
 <template>
-  <p>Home page</p>
+  <p class="test">Home page</p>
 </template>
 
 <script setup lang="ts">
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+  .test {
+    @include gradient($primary, $tertiary);
+  }
 </style>
