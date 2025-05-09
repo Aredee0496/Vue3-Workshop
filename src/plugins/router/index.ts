@@ -1,23 +1,79 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '@/views/HomeView.vue'
+import { createRouter, createWebHistory } from "vue-router";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'home',
-      component: HomeView,
+      path: "/",
+      component: () => import("@/layouts/BlankLayout.vue"),
+      meta: {requireAuth: false},
+      children: [
+        {
+          path: "",
+          name: "LoginView",
+          component: () => import("@/views/LoginView.vue"),
+        },
+        {
+          path: "notfound",
+          name: "NotfoundView",
+          component: () => import("@/views/NotfoundView.vue"),
+        },
+      ],
     },
     {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('@/views/AboutView.vue'),
+      path: "/default",
+      component: () => import("@/layouts/DefaultLayout.vue"),
+      meta: {requireAuth: true},
+      children: [
+        {
+          path: "",
+          name: "HomeView",
+          component: () => import("@/views/HomeView.vue"),
+        },
+        {
+          path: "product/:id",
+          name: "ProductView",
+          component: () => import("@/views/ProductView.vue"),
+          props: true
+        },
+        {
+          path: "cart",
+          name: "CartView",
+          component: () => import("@/views/CartView.vue"),
+        },
+      ],
     },
+    {
+      path: "/:pathMatch(.*)*",
+      redirect: "/notfound",
+    }
   ],
+});
+
+router.beforeEach((to, form, next) => {
+  if (
+    to.name !== 'Login' &&
+    to.meta?.requireAuth &&
+    !isAuthenticated
+  ) {
+    next({ name: 'LoginView' })
+  } else {
+    next()
+  }
 })
 
-export default router
+const isAuthenticated = localStorage.getItem('auth_token')
+console.log('isAuthenticated', isAuthenticated)
+router.beforeEach((to, form, next) => {
+  if (
+    to.name !== 'LoginView' &&
+    to.meta?.requireAuth &&
+    !isAuthenticated
+  ) {
+    next({ name: 'LoginView' })
+  } else {
+    next()
+  }
+})
+
+export default router;

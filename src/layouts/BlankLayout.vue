@@ -1,11 +1,13 @@
 <template>
- <p>About page</p>
+  <v-main>
+  <router-view />
+  </v-main>
 </template>
 
 <script setup lang="ts">
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 </style>
